@@ -161,6 +161,7 @@ class UDSCorpus(PredPattCorpus):
         name
             corpus name to be appended to the beginning of graph ids
         """
+        print(annotations)
         predpatt_corpus = PredPattCorpus.from_conll(corpus, name=name)
         predpatt_graphs = {name: UDSGraph(g, name)
                            for name, g in predpatt_corpus.items()}
@@ -170,11 +171,13 @@ class UDSCorpus(PredPattCorpus):
         # want to assume this, and users should be deliberate in specifying
         # the annotation type.
         processed_annotations = []
-        for ann_path, ann_type in annotations.items():
+        for ann_type, ann_path in annotations.items():
             if ann_type == 'raw':
-                processed_annotations.append(RawUDSDataset.from_json(ann_path))
+                for anno in ann_path:
+                    processed_annotations.append(RawUDSDataset.from_json(anno))
             elif ann_type == 'normalized':
-                processed_annotations.append(NormalizedUDSDataset.from_json(ann_path))
+                for anno in ann_path:
+                    processed_annotations.append(NormalizedUDSDataset.from_json(anno))
             else:
                 raise ValueError('Unrecognized annotation type {0} '\
                                  'for annotation {1}.'.format(ann_type, ann_path))
